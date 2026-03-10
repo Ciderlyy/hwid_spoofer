@@ -90,7 +90,7 @@ static void WaitForKey()
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
- * Service management (unchanged)
+ * Service management — install, start, stop, remove
  * ═══════════════════════════════════════════════════════════════════════ */
 
 static SC_HANDLE OpenSCM()
@@ -220,7 +220,7 @@ static bool StopDriver()
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
- * Device communication (unchanged)
+ * Device communication — CreateFile, DeviceIoControl
  * ═══════════════════════════════════════════════════════════════════════ */
 
 static HANDLE OpenDevice()
@@ -253,7 +253,7 @@ static bool SendIoctl(HANDLE dev, DWORD code,
 }
 
 /* ═══════════════════════════════════════════════════════════════════════
- * High-level operations (unchanged)
+ * High-level operations — enable, disable, status, regen
  * ═══════════════════════════════════════════════════════════════════════ */
 
 static void PrintStatus(HANDLE dev)

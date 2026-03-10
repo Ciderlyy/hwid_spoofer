@@ -366,8 +366,7 @@ static NTSTATUS VmxSetupProcessor(ULONG cpuIndex)
         CPU_BASED_USE_MSR_BITMAPS | CPU_BASED_ACTIVATE_SECONDARY |
         CPU_BASED_RDTSC_EXITING,
         IA32_VMX_TRUE_PROCBASED_CTLS);
-    /* Force CPUID exiting */
-    procBased |= (1UL << 7); /* not needed — CPUID always exits */
+    procBased |= (1UL << 7); /* CPUID exiting — intercept hypervisor detection */
     __vmx_vmwrite(VMCS_CTRL_PROC_BASED, procBased);
 
     ULONG procBased2 = AdjustControls(
