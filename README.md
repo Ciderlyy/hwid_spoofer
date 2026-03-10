@@ -175,9 +175,25 @@ hwid_spoofer/
 
 ---
 
+## Testing
+
+Tested in the following environment:
+
+| Component | Version |
+|-----------|---------|
+| Host | VMware Workstation 17 |
+| Guest OS | Windows 10 22H2 x64, Windows 11 23H2 x64 |
+| WDK | 10.0.22621 |
+| Secure Boot | Disabled |
+| HVCI | Disabled |
+
+No guarantee it works against hardened anti-cheat or on other Windows builds. Run in a snapshot-protected VM only.
+
+---
+
 ## Key technical risks
 
-- **PatchGuard**: EPT hooks don't modify kernel code pages (the real page stays clean in EPT R/W view), so PatchGuard integrity checks pass. The hypervisor handles PatchGuard's own CPUID/MSR probes transparently.
+- **PatchGuard**: EPT hooks avoid modifying kernel code pages (the real page stays clean in EPT R/W view). In our VM testing, PatchGuard has not triggered. This is not a guarantee — PatchGuard behavior varies by Windows build.
 - **Performance**: EPT violations cost ~1000 cycles each. Disk IOCTLs are infrequent. `NtQuerySystemInformation` is moderate. SMBIOS/TPM queries are rare.
 - **HVCI**: If Hypervisor-enforced Code Integrity is enabled, Windows runs under Hyper-V. Our hypervisor can't coexist — HVCI must be disabled.
 - **Nested virtualization**: Works with VT-x passthrough in VMware. Without passthrough, nested VT-x adds complexity.
@@ -189,8 +205,8 @@ hwid_spoofer/
 ## Safety notes
 
 - Always run inside a **snapshot-protected VMware VM**
-- The driver uses documented kernel APIs (CmCallback, IoCreateDevice) — PatchGuard-safe
-- EPT-based hooks are invisible to both user-mode and kernel-mode integrity scans
+- The driver uses documented kernel APIs (CmCallback, IoCreateDevice) — these are generally considered PatchGuard-safe, but no warranty
+- EPT-based hooks are not visible to typical user-mode or kernel-mode integrity scans in our testing; hardened targets may differ
 - `BCryptGenRandom` + RDRAND fallback for crypto-quality PRNG
 - `EX_SPIN_LOCK` (read/write) and `FAST_MUTEX` for thread-safe state management
 - SPTD data buffers are MDL-locked at PASSIVE_LEVEL, safe in completion routines
